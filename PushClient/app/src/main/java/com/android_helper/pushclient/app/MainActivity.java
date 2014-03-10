@@ -32,7 +32,7 @@ public class MainActivity extends ActionBarActivity {
      * Substitute you own sender ID here. This is the project number you got
      * from the API Console, as described in "Getting Started."
      */
-    String SENDER_ID = "deft-virtue-515"; // Your-Sender-ID
+    static final String GOOGLE_SENDER_ID = "deft-virtue-515";
 
     /**
      * Tag used on log messages.
@@ -42,9 +42,7 @@ public class MainActivity extends ActionBarActivity {
     TextView mDisplay;
     GoogleCloudMessaging gcm;
     AtomicInteger msgId = new AtomicInteger();
-    SharedPreferences prefs;
     Context context;
-
     String regid;
 
     @Override
@@ -160,7 +158,7 @@ public class MainActivity extends ActionBarActivity {
                         gcm = GoogleCloudMessaging.getInstance(context);
                     }
                     Log.i(LOG_TAG, "gcm != null " + gcm.toString());
-                    regid = gcm.register(SENDER_ID);
+                    regid = gcm.register(GOOGLE_SENDER_ID);
                     msg = "Device registered, registration ID=" + regid;
 
                     // You should send the registration ID to your server over HTTP, so it
@@ -203,7 +201,7 @@ public class MainActivity extends ActionBarActivity {
                         data.putString("my_message", EXTRA_MESSAGE);
                         data.putString("my_action", "com.android_helper.pushclient.app.ECHO_NOW");
                         String id = Integer.toString(msgId.incrementAndGet());
-                        gcm.send(SENDER_ID + "@gcm.googleapis.com", id, data);
+                        gcm.send(GOOGLE_SENDER_ID + "@gcm.googleapis.com", id, data);
                         msg = "Sent message";
 
                     } catch (IOException ex) {
