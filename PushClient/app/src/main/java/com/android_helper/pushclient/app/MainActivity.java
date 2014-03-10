@@ -32,7 +32,7 @@ public class MainActivity extends ActionBarActivity {
      * Substitute you own sender ID here. This is the project number you got
      * from the API Console, as described in "Getting Started."
      */
-    String SENDER_ID = "Your-Sender-ID"; // TODO
+    String SENDER_ID = "deft-virtue-515"; // Your-Sender-ID
 
     /**
      * Tag used on log messages.
@@ -63,6 +63,7 @@ public class MainActivity extends ActionBarActivity {
             regid = getRegistrationId(context);
 
             if (regid.isEmpty()) {
+                Log.i(LOG_TAG, "onCreate regid.isEmpty() - registerInBackground()");
                 registerInBackground();
             }
         } else {
@@ -94,6 +95,7 @@ public class MainActivity extends ActionBarActivity {
             }
             return false;
         }
+        Log.i(LOG_TAG, "checkPlayServices returns true");
         return true;
     }
 
@@ -148,6 +150,7 @@ public class MainActivity extends ActionBarActivity {
      * shared preferences.
      */
     private void registerInBackground() {
+        Log.i(LOG_TAG, "registerInBackground() AsyncTask doInBackground");
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... params) {
@@ -156,6 +159,7 @@ public class MainActivity extends ActionBarActivity {
                     if (gcm == null) {
                         gcm = GoogleCloudMessaging.getInstance(context);
                     }
+                    Log.i(LOG_TAG, "gcm != null " + gcm.toString());
                     regid = gcm.register(SENDER_ID);
                     msg = "Device registered, registration ID=" + regid;
 
@@ -171,6 +175,7 @@ public class MainActivity extends ActionBarActivity {
                     storeRegistrationId(context, regid);
                 } catch (IOException ex) {
                     msg = "Error :" + ex.getMessage();
+                    Log.e(LOG_TAG, "Error :" + ex.getMessage());
                     // If there is an error, don't just keep trying to register.
                     // Require the user to click a button again, or perform
                     // exponential back-off.
@@ -196,10 +201,11 @@ public class MainActivity extends ActionBarActivity {
                     try {
                         Bundle data = new Bundle();
                         data.putString("my_message", EXTRA_MESSAGE);
-                        data.putString("my_action", "com.google.android.gcm.demo.app.ECHO_NOW");
+                        data.putString("my_action", "com.android_helper.pushclient.app.ECHO_NOW");
                         String id = Integer.toString(msgId.incrementAndGet());
                         gcm.send(SENDER_ID + "@gcm.googleapis.com", id, data);
                         msg = "Sent message";
+
                     } catch (IOException ex) {
                         msg = "Error :" + ex.getMessage();
                     }
@@ -251,21 +257,17 @@ public class MainActivity extends ActionBarActivity {
      */
     private void sendRegistrationIdToBackend() {
         // Your implementation here.
+        Log.i(LOG_TAG, "sendRegistrationIdToBackend()");
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;

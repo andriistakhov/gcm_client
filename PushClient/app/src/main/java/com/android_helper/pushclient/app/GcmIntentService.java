@@ -13,13 +13,15 @@ import android.util.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 public class GcmIntentService extends IntentService {
+
     public static final int NOTIFICATION_ID = 1;
-    private static final String LOG_TAG = "intent_service_log";
+    private static final String LOG_TAG = "service_log";
     private NotificationManager mNotificationManager;
-    NotificationCompat.Builder builder;
+    private NotificationCompat.Builder mBuilder;
 
     public GcmIntentService() {
         super("GcmIntentService");
+        Log.i(LOG_TAG, "GcmIntentService init");
     }
 
     @Override
@@ -71,13 +73,11 @@ public class GcmIntentService extends IntentService {
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, MainActivity.class), 0);
 
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_stat_gcm)
-                        .setContentTitle("GCM Notification")
-                        .setStyle(new NotificationCompat.BigTextStyle()
-                                .bigText(msg))
-                        .setContentText(msg);
+        mBuilder = new NotificationCompat.Builder(this)
+                    .setSmallIcon(R.drawable.ic_stat_gcm)
+                    .setContentTitle("GCM Notification")
+                    .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
+                    .setContentText(msg);
 
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
