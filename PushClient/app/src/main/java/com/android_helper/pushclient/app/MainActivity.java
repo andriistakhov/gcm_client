@@ -32,7 +32,7 @@ public class MainActivity extends ActionBarActivity {
      * Substitute you own sender ID here. This is the project number you got
      * from the API Console, as described in "Getting Started."
      */
-    static final String GOOGLE_SENDER_ID = "deft-virtue-515";
+    static final String GOOGLE_SENDER_ID = "767680602912"; // "deft-virtue-515"
 
     /**
      * Tag used on log messages.
