@@ -1,6 +1,7 @@
 package com.android_helper.pushclient.app;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -23,17 +24,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainActivity extends ActionBarActivity {
 
-    public static final String EXTRA_MESSAGE = "message";
-    public static final String PROPERTY_REG_ID = "registration_id";
-    private static final String PROPERTY_APP_VERSION = "appVersion";
-    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-
-    /**
-     * Substitute you own sender ID here. This is the project number you got
-     * from the API Console, as described in "Getting Started."
-     */
-    static final String GOOGLE_SENDER_ID = "767680602912"; // "deft-virtue-515"
-
     /**
      * Tag used on log messages.
      */
@@ -43,7 +33,7 @@ public class MainActivity extends ActionBarActivity {
     GoogleCloudMessaging gcm;
     AtomicInteger msgId = new AtomicInteger();
     Context context;
-    String regid;
+    String regid = Constants.REG_ID_IS_EMPTY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +50,7 @@ public class MainActivity extends ActionBarActivity {
             gcm = GoogleCloudMessaging.getInstance(this);
             regid = getRegistrationId(context);
 
-            if (regid.isEmpty()) {
+            if (regid.equals(Constants.REG_ID_IS_EMPTY)) {
                 Log.i(LOG_TAG, "onCreate regid.isEmpty() - registerInBackground()");
                 registerInBackground();
             }
@@ -86,7 +76,7 @@ public class MainActivity extends ActionBarActivity {
         if (resultCode != ConnectionResult.SUCCESS) {
             if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
                 GooglePlayServicesUtil.getErrorDialog(resultCode, this,
-                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+                        Constants.PLAY_SERVICES_RESOLUTION_REQUEST).show();
             } else {
                 Log.i(LOG_TAG, "This device is not supported.");
                 finish();
@@ -109,8 +99,8 @@ public class MainActivity extends ActionBarActivity {
         int appVersion = getAppVersion(context);
         Log.i(LOG_TAG, "Saving regId on app version " + appVersion);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(PROPERTY_REG_ID, regId);
-        editor.putInt(PROPERTY_APP_VERSION, appVersion);
+        editor.putString(Constants.PROPERTY_REG_ID, regId);
+        editor.putInt(Constants.PROPERTY_APP_VERSION, appVersion);
         editor.commit();
     }
 
@@ -122,21 +112,21 @@ public class MainActivity extends ActionBarActivity {
      * @return registration ID, or empty string if there is no existing
      *         registration ID.
      */
-    private String getRegistrationId(Context context) {
+    public String getRegistrationId(Context context) {
         final SharedPreferences prefs = getGcmPreferences(context);
-        String registrationId = prefs.getString(PROPERTY_REG_ID, "");
-        if (registrationId.isEmpty()) {
+        String registrationId = prefs.getString(Constants.PROPERTY_REG_ID, "");
+        if (registrationId.equals(Constants.REG_ID_IS_EMPTY)) {
             Log.i(LOG_TAG, "Registration not found.");
-            return "";
+            return Constants.REG_ID_IS_EMPTY;
         }
         // Check if app was updated; if so, it must clear the registration ID
         // since the existing regID is not guaranteed to work with the new
         // app version.
-        int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
+        int registeredVersion = prefs.getInt(Constants.PROPERTY_APP_VERSION, Integer.MIN_VALUE);
         int currentVersion = getAppVersion(context);
         if (registeredVersion != currentVersion) {
             Log.i(LOG_TAG, "App version changed.");
-            return "";
+            return Constants.REG_ID_IS_EMPTY;
         }
         return registrationId;
     }
@@ -158,8 +148,8 @@ public class MainActivity extends ActionBarActivity {
                         gcm = GoogleCloudMessaging.getInstance(context);
                     }
                     Log.i(LOG_TAG, "gcm != null " + gcm.toString());
-                    regid = gcm.register(GOOGLE_SENDER_ID);
-                    msg = "Device registered, registration ID=" + regid;
+                    regid = gcm.register(Constants.GOOGLE_SENDER_ID);
+                    msg = "Device registered, registration ID=" + regid + "\n";
 
                     // You should send the registration ID to your server over HTTP, so it
                     // can use GCM/HTTP or CCS to send messages to your app.
@@ -198,10 +188,10 @@ public class MainActivity extends ActionBarActivity {
                     String msg = "";
                     try {
                         Bundle data = new Bundle();
-                        data.putString("my_message", EXTRA_MESSAGE);
+                        data.putString("my_message", Constants.EXTRA_MESSAGE);
                         data.putString("my_action", "com.android_helper.pushclient.app.ECHO_NOW");
                         String id = Integer.toString(msgId.incrementAndGet());
-                        gcm.send(GOOGLE_SENDER_ID + "@gcm.googleapis.com", id, data);
+                        gcm.send(Constants.GOOGLE_SENDER_ID + "@gcm.googleapis.com", id, data);
                         msg = "Sent message";
 
                     } catch (IOException ex) {
@@ -255,6 +245,9 @@ public class MainActivity extends ActionBarActivity {
      */
     private void sendRegistrationIdToBackend() {
         // Your implementation here.
+
+
+
         Log.i(LOG_TAG, "sendRegistrationIdToBackend()");
     }
 
@@ -268,6 +261,10 @@ public class MainActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            intent.putExtra(Constants.PROPERTY_REG_ID, regid);
+            intent.putExtra(Constants.PROPERTY_APP_VERSION, getAppVersion(this));
+            startActivity(intent);
             return true;
         }
         return super.onOptionsItemSelected(item);
