@@ -6,8 +6,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,7 +18,18 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -245,10 +256,34 @@ public class MainActivity extends ActionBarActivity {
      */
     private void sendRegistrationIdToBackend() {
         // Your implementation here.
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpPost httpPost = new HttpPost(Constants.REGISTER_URL);
+        try {
+            List<NameValuePair> pairs = getPostParams();
+            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(pairs, "UTF-8");
+            httpPost.setEntity(entity);
 
+            // Execute HTTP Post Request
+            HttpResponse response = httpclient.execute(httpPost);
 
+        } catch (ClientProtocolException e) {
+            // TODO Auto-generated catch block
+            Log.e(LOG_TAG, "Error :" + e.getMessage());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            Log.e(LOG_TAG, "Error :" + e.getMessage());
+        }
 
         Log.i(LOG_TAG, "sendRegistrationIdToBackend()");
+    }
+
+    private List<NameValuePair> getPostParams(){
+        List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(2);
+        nameValuePair.add(new BasicNameValuePair("email", "gnilov@gmail.com"));
+        nameValuePair.add(new BasicNameValuePair("name", "userName"));
+        nameValuePair.add(new BasicNameValuePair("regId", Constants.GOOGLE_SENDER_ID));
+
+        return nameValuePair;
     }
 
     @Override
