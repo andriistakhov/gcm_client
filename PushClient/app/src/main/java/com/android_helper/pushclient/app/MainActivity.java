@@ -18,6 +18,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -26,8 +27,13 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -41,6 +47,7 @@ public class MainActivity extends ActionBarActivity {
     private static final String LOG_TAG = "main_activity_log";
 
     TextView mDisplay;
+
     GoogleCloudMessaging gcm;
     AtomicInteger msgId = new AtomicInteger();
     Context context;
@@ -128,6 +135,7 @@ public class MainActivity extends ActionBarActivity {
         String registrationId = prefs.getString(Constants.PROPERTY_REG_ID, "");
         if (registrationId.equals(Constants.REG_ID_IS_EMPTY)) {
             Log.i(LOG_TAG, "Registration not found.");
+            mDisplay.append("Registration not found." + "\n");
             return Constants.REG_ID_IS_EMPTY;
         }
         // Check if app was updated; if so, it must clear the registration ID
@@ -192,32 +200,66 @@ public class MainActivity extends ActionBarActivity {
     // Send an upstream message.
     public void onClick(final View view) {
 
-        if (view == findViewById(R.id.send)) {
-            new AsyncTask<Void, Void, String>() {
-                @Override
-                protected String doInBackground(Void... params) {
-                    String msg = "";
-                    try {
-                        Bundle data = new Bundle();
-                        data.putString("my_message", Constants.EXTRA_MESSAGE);
-                        data.putString("my_action", "com.android_helper.pushclient.app.ECHO_NOW");
-                        String id = Integer.toString(msgId.incrementAndGet());
-                        gcm.send(Constants.GOOGLE_SENDER_ID + "@gcm.googleapis.com", id, data);
-                        msg = "Sent message";
+        switch (view.getId()) {
 
-                    } catch (IOException ex) {
-                        msg = "Error :" + ex.getMessage();
+            case R.id.btnSendToBackend:
+                new AsyncTask<Void, Void, String>() {
+                    @Override
+                    protected String doInBackground(Void... params) {
+                        String msg = "";
+                        try {
+                            if (getRegistrationId(getApplicationContext()) != Constants.REG_ID_IS_EMPTY) {
+                                msg = "Try sendRegistrationIdToBackend";
+                                sendRegistrationIdToBackend();
+                            } else {
+                                msg = "Registration data not valid";
+                            }
+
+                        } catch (Exception ex) {
+                            msg = "Error :" + ex.getMessage();
+                        }
+                        return msg;
                     }
-                    return msg;
-                }
 
-                @Override
-                protected void onPostExecute(String msg) {
-                    mDisplay.append(msg + "\n");
-                }
-            }.execute(null, null, null);
-        } else if (view == findViewById(R.id.clear)) {
-            mDisplay.setText("");
+                    @Override
+                    protected void onPostExecute(String msg) {
+                        mDisplay.append(msg + "\n");
+                    }
+                }.execute(null, null, null);
+
+
+                break;
+
+            case R.id.send:
+                new AsyncTask<Void, Void, String>() {
+                    @Override
+                    protected String doInBackground(Void... params) {
+                        String msg = "";
+                        try {
+                            Bundle data = new Bundle();
+                            data.putString("my_message", Constants.EXTRA_MESSAGE);
+                            data.putString("my_action", "com.android_helper.pushclient.app.ECHO_NOW");
+                            String id = Integer.toString(msgId.incrementAndGet());
+                            gcm.send(Constants.GOOGLE_SENDER_ID + "@gcm.googleapis.com", id, data);
+                            msg = "Sent message";
+
+                        } catch (IOException ex) {
+                            msg = "Error :" + ex.getMessage();
+                        }
+                        return msg;
+                    }
+
+                    @Override
+                    protected void onPostExecute(String msg) {
+                        mDisplay.append(msg + "\n");
+                    }
+                }.execute(null, null, null);
+                break;
+
+            case R.id.clear:
+                mDisplay.setText("");
+                break;
+
         }
     }
 
@@ -256,32 +298,61 @@ public class MainActivity extends ActionBarActivity {
      */
     private void sendRegistrationIdToBackend() {
         // Your implementation here.
+        InputStream inputStream = null;
         HttpClient httpclient = new DefaultHttpClient();
         HttpPost httpPost = new HttpPost(Constants.REGISTER_URL);
         try {
             List<NameValuePair> pairs = getPostParams();
-            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(pairs, "UTF-8");
-            httpPost.setEntity(entity);
+            UrlEncodedFormEntity urlEncoded = new UrlEncodedFormEntity(pairs, "UTF-8");
+            httpPost.setEntity(urlEncoded);
 
             // Execute HTTP Post Request
+            Log.i(LOG_TAG, "Execute httpclient");
             HttpResponse response = httpclient.execute(httpPost);
+            Log.i(LOG_TAG, "Has responce from httpclient");
+            HttpEntity httpEntity = response.getEntity();
 
-        } catch (ClientProtocolException e) {
-            // TODO Auto-generated catch block
-            Log.e(LOG_TAG, "Error :" + e.getMessage());
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            Log.e(LOG_TAG, "Error :" + e.getMessage());
+            // Read content & Log
+            inputStream = httpEntity.getContent();
+        } catch (UnsupportedEncodingException e1) {
+            Log.e("UnsupportedEncodingException", e1.toString());
+            e1.printStackTrace();
+        } catch (ClientProtocolException e2) {
+            Log.e("ClientProtocolException", e2.toString());
+            e2.printStackTrace();
+        } catch (IllegalStateException e3) {
+            Log.e("IllegalStateException", e3.toString());
+            e3.printStackTrace();
+        } catch (IOException e4) {
+            Log.e("IOException", e4.toString());
+            e4.printStackTrace();
+        }
+        // Convert response to string using String Builder
+        String result = null;
+        try {
+            BufferedReader bReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"), 8);
+            StringBuilder sBuilder = new StringBuilder();
+
+            String line = null;
+            while ((line = bReader.readLine()) != null) {
+                sBuilder.append(line + "\n");
+            }
+
+            inputStream.close();
+            result = sBuilder.toString();
+
+        } catch (Exception e) {
+            Log.e("StringBuilding & BufferedReader", "Error converting result " + e.toString());
         }
 
-        Log.i(LOG_TAG, "sendRegistrationIdToBackend()");
+        Log.i(LOG_TAG, "sendRegistrationIdToBackend(): " + result);
     }
 
     private List<NameValuePair> getPostParams(){
         List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(2);
         nameValuePair.add(new BasicNameValuePair("email", "gnilov@gmail.com"));
         nameValuePair.add(new BasicNameValuePair("name", "userName"));
-        nameValuePair.add(new BasicNameValuePair("regId", Constants.GOOGLE_SENDER_ID));
+        nameValuePair.add(new BasicNameValuePair("regId", getRegistrationId(this)));
 
         return nameValuePair;
     }

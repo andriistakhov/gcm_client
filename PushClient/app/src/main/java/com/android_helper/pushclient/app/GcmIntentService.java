@@ -31,6 +31,7 @@ public class GcmIntentService extends IntentService {
         // The getMessageType() intent parameter must be the intent you received
         // in your BroadcastReceiver.
         String messageType = gcm.getMessageType(intent);
+        Log.i(LOG_TAG, "messageType" + messageType);
 
         if (!extras.isEmpty()) {  // has effect of unparcelling Bundle
             /*
@@ -78,6 +79,8 @@ public class GcmIntentService extends IntentService {
                     .setContentTitle("Push client GCM Notification")
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
                     .setContentText(msg);
+
+        Log.i(LOG_TAG, "Push client GCM Notification");
 
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());

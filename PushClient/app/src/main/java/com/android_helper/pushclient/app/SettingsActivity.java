@@ -27,6 +27,8 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
         tvSettingsRegId = (TextView) findViewById(R.id.tvSettingsRegId);
         tvSettingsRegId.setText(getIntent().getStringExtra(Constants.PROPERTY_REG_ID));
 
+        Log.i(LOG_TAG, getIntent().getStringExtra(Constants.PROPERTY_REG_ID));
+
         Button btnClearRegId = (Button) findViewById(R.id.btnClearRegId);
         btnClearRegId.setOnClickListener(this);
 
@@ -34,16 +36,23 @@ public class SettingsActivity extends ActionBarActivity implements View.OnClickL
 
     @Override
     public void onClick (View v){
-        final SharedPreferences prefs = getSharedPreferences(MainActivity.class.getSimpleName(),
-                Context.MODE_PRIVATE);
-        Log.i(LOG_TAG, "Registration ID clearing");
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.remove(Constants.PROPERTY_REG_ID);
-        editor.remove(Constants.PROPERTY_APP_VERSION);
-        editor.commit();
+        switch (v.getId()) {
 
-        tvSettingsAppVersion.setText("?");
-        tvSettingsRegId.setText(Constants.REG_ID_IS_EMPTY);
+            case R.id.btnClearRegId:
+                final SharedPreferences prefs = getSharedPreferences(MainActivity.class.getSimpleName(),
+                        Context.MODE_PRIVATE);
+                Log.i(LOG_TAG, "Registration ID clearing");
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.remove(Constants.PROPERTY_REG_ID);
+                editor.remove(Constants.PROPERTY_APP_VERSION);
+                editor.commit();
+
+                tvSettingsAppVersion.setText("?");
+                tvSettingsRegId.setText(Constants.REG_ID_IS_EMPTY);
+
+                break;
+
+        }
 
     }
 

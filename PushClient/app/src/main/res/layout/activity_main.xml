@@ -30,6 +30,13 @@
             android:onClick="onClick"
             android:text="@string/clear" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Manually send RegId to Backend"
+            android:onClick="onClick"
+            android:id="@+id/btnSendToBackend"/>
+
     </LinearLayout>
 
     <ScrollView
