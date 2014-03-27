@@ -27,7 +27,6 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -350,7 +349,7 @@ public class MainActivity extends ActionBarActivity {
 
     private List<NameValuePair> getPostParams(){
         List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(2);
-        nameValuePair.add(new BasicNameValuePair("email", "gnilov@gmail.com"));
+        nameValuePair.add(new BasicNameValuePair("email", "some.eamail@gmail.com"));
         nameValuePair.add(new BasicNameValuePair("name", "userName"));
         nameValuePair.add(new BasicNameValuePair("regId", getRegistrationId(this)));
 

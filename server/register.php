@@ -20,7 +20,7 @@ if (isset($nameUser) && isset($nameEmail) && isset($gcmRegID)) {
     $res = storeUser($nameUser, $nameEmail, $gcmRegID);
 
     $registatoin_ids = array($gcmRegID);
-    $message = array("product" => "shirt");
+    $message = array("message" => "device has been registerd in backend");
 
     $result = send_push_notification($registatoin_ids, $message);
 

@@ -9,7 +9,7 @@
          
          
         $registatoin_ids = array($gcmRegID);
-        $message = array("price" => $pushMessage);
+        $message = array("message" => $pushMessage);
      
         $result = send_push_notification($registatoin_ids, $message);
      
