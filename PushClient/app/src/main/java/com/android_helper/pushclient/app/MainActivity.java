@@ -109,7 +109,7 @@ public class MainActivity extends ActionBarActivity {
      * {@code SharedPreferences}.
      *
      * @param context application's context.
-     * @param regId registration ID
+     * @param regId   registration ID
      */
     private void storeRegistrationId(Context context, String regId) {
         final SharedPreferences prefs = getGcmPreferences(context);
@@ -123,11 +123,11 @@ public class MainActivity extends ActionBarActivity {
 
     /**
      * Gets the current registration ID for application on GCM service, if there is one.
-     * <p>
+     * <p/>
      * If result is empty, the app needs to register.
      *
      * @return registration ID, or empty string if there is no existing
-     *         registration ID.
+     * registration ID.
      */
     public String getRegistrationId(Context context) {
         final SharedPreferences prefs = getGcmPreferences(context);
@@ -151,7 +151,7 @@ public class MainActivity extends ActionBarActivity {
 
     /**
      * Registers the application with GCM servers asynchronously.
-     * <p>
+     * <p/>
      * Stores the registration ID and the app versionCode in the application's
      * shared preferences.
      */
@@ -226,37 +226,6 @@ public class MainActivity extends ActionBarActivity {
                     }
                 }.execute(null, null, null);
 
-
-                break;
-
-            case R.id.send:
-                new AsyncTask<Void, Void, String>() {
-                    @Override
-                    protected String doInBackground(Void... params) {
-                        String msg = "";
-                        try {
-                            Bundle data = new Bundle();
-                            data.putString("my_message", Constants.EXTRA_MESSAGE);
-                            data.putString("my_action", "com.android_helper.pushclient.app.ECHO_NOW");
-                            String id = Integer.toString(msgId.incrementAndGet());
-                            gcm.send(Constants.GOOGLE_SENDER_ID + "@gcm.googleapis.com", id, data);
-                            msg = "Sent message";
-
-                        } catch (IOException ex) {
-                            msg = "Error :" + ex.getMessage();
-                        }
-                        return msg;
-                    }
-
-                    @Override
-                    protected void onPostExecute(String msg) {
-                        mDisplay.append(msg + "\n");
-                    }
-                }.execute(null, null, null);
-                break;
-
-            case R.id.clear:
-                mDisplay.setText("");
                 break;
 
         }
@@ -290,6 +259,7 @@ public class MainActivity extends ActionBarActivity {
         return getSharedPreferences(MainActivity.class.getSimpleName(),
                 Context.MODE_PRIVATE);
     }
+
     /**
      * Sends the registration ID to your server over HTTP, so it can use GCM/HTTP or CCS to send
      * messages to your app. Not needed for this demo since the device sends upstream messages
@@ -347,7 +317,7 @@ public class MainActivity extends ActionBarActivity {
         Log.i(LOG_TAG, "sendRegistrationIdToBackend(): " + result);
     }
 
-    private List<NameValuePair> getPostParams(){
+    private List<NameValuePair> getPostParams() {
         List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(2);
         nameValuePair.add(new BasicNameValuePair("email", "some.eamail@gmail.com"));
         nameValuePair.add(new BasicNameValuePair("name", "userName"));
