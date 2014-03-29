@@ -8,6 +8,6 @@
  
 // Google Cloud Messaging API Key
 // Place your Google API Key
-define("GOOGLE_API_KEY", "AIzaSyDAO-w0eYDdACF220U9guNwJ1uQmAzpOHI"); 
+define("GOOGLE_API_KEY", "AIzaSyCpy5YIi9SereNhYsHR_DR4vZVM9McDvXI"); 
                            
 ?>

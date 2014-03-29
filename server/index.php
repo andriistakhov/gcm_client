@@ -1,6 +1,7 @@
 ﻿<?php
    require_once('loader.php');
-    
+   require_once('send_push_notification_message.php');
+
     $resultUsers =  getAllUsers();
     if ($resultUsers != false)
         $NumOfUsers = mysql_num_rows($resultUsers);

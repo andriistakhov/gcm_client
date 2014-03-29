@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -46,6 +47,8 @@ public class MainActivity extends ActionBarActivity {
     private static final String LOG_TAG = "main_activity_log";
 
     TextView mDisplay;
+    EditText mUsername;
+    EditText mEmail;
 
     GoogleCloudMessaging gcm;
     AtomicInteger msgId = new AtomicInteger();
@@ -59,6 +62,10 @@ public class MainActivity extends ActionBarActivity {
 
 
         mDisplay = (TextView) findViewById(R.id.display);
+        mUsername = (EditText) findViewById(R.id.editText_username);
+        mUsername.setText(Constants.USER_NAME);
+        mEmail = (EditText) findViewById(R.id.editText_email);
+        mEmail.setText(Constants.USER_EMAIL);
 
         context = getApplicationContext();
 
@@ -326,8 +333,8 @@ public class MainActivity extends ActionBarActivity {
 
     private List<NameValuePair> getPostParams() {
         List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(2);
-        nameValuePair.add(new BasicNameValuePair("email", "some.eamail@gmail.com"));
-        nameValuePair.add(new BasicNameValuePair("name", "userName"));
+        nameValuePair.add(new BasicNameValuePair("email", mEmail.getText().toString()));
+        nameValuePair.add(new BasicNameValuePair("name",  mUsername.getText().toString()));
         nameValuePair.add(new BasicNameValuePair("regId", getRegistrationId(this)));
 
         return nameValuePair;

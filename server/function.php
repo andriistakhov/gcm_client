@@ -52,6 +52,11 @@
                                     FROM gcm_users");
         return $result;
     }
+    
+  function deleteAllUsers() {
+        $result = mysql_query("DELETE FROM gcm_users");
+        return $result;
+    }
  
     // Validate user
   function isUserExisted($email) {
@@ -109,6 +114,6 @@
  
         // Close connection
         curl_close($ch);
-        echo $result;
+        return $result;
     }
 ?>

@@ -11,32 +11,82 @@
     tools:context="com.android_helper.pushclient.app.MainActivity">
 
     <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:padding="10dip"
+        android:id="@+id/layout_username">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_username"
+            android:id="@+id/textView"/>
+
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/editText_username"
+            android:layout_marginTop="5dip"
+            android:layout_marginBottom="20dip"
+            android:singleLine="true" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_username"
+        android:id="@+id/layout_email"
+        android:padding="10dip"
+        android:layout_alignParentStart="true">
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_email"
+            android:id="@+id/textView2"/>
+
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/editText_email"
+            android:layout_marginTop="5dip"
+            android:layout_marginBottom="20dip"
+            android:singleLine="true" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
         android:id="@+id/linearLayout"
-        android:gravity="center">
+        android:gravity="center"
+        android:paddingTop="10dip"
+        android:layout_below="@+id/layout_email">
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Manually send RegId to Backend"
+            android:text="@string/button_registration"
             android:onClick="onClick"
-            android:id="@+id/btnSendToBackend"/>
+            android:id="@+id/btnSendToBackend"
+            android:layout_gravity="center" />
 
-    </LinearLayout>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/linearLayout">
-
-        <TextView
-            android:id="@+id/display"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent"
+            android:layout_below="@+id/btnSendToBackend"
+            android:id="@+id/scrollView">
 
-    </ScrollView>
+            <TextView
+                android:id="@+id/display"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="20dip"/>
+
+        </ScrollView>
+    </LinearLayout>
 
 </RelativeLayout>
 
