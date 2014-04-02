@@ -2,7 +2,8 @@
    require_once('loader.php');
    require_once('send_push_notification_message.php');
 
-    $resultUsers =  getAllUsers();
+    $resultUsers = getAllUsers();
+
     if ($resultUsers != false)
         $NumOfUsers = mysql_num_rows($resultUsers);
     else
@@ -18,9 +19,9 @@
             $(document).ready(function(){
                 
             });
-            function sendPushNotification(id){
-                var data = $('form#'+id).serialize();
-                $('form#'+id).unbind('submit');                
+            function sendPushNotification(){
+                var data = $('form#sendForm').serialize();
+                $('form#sendForm').unbind('submit');                
                 $.ajax({
                     url: "send_push_notification_message.php",
                     type: 'GET',
@@ -30,9 +31,10 @@
                     },
                     success: function(data, textStatus, xhr) {
                           $('.push_message').val("");
+                          $('.app_version').val("");
                     },
                     error: function(xhr, textStatus, errorThrown) {
-                         
+                          $('.push_message').val(textStatus);
                     }
                 });
                 return false;
@@ -62,7 +64,7 @@
         <table  width="910" cellpadding="1" cellspacing="1" style="padding-left:10px;">
          <tr>
            <td align="left">
-              <h1>No of Devices Registered: <?php echo $NumOfUsers; ?></h1>
+              <h1>Number of Devices Registered: <?php echo $NumOfUsers; ?></h1>
               <hr/>
            </td>
           </tr> 
@@ -71,42 +73,23 @@
               <table width="100%" cellpadding="1"
                         cellspacing="1"
                         style="border:1px solid #CCC;" bgcolor="#f4f4f4">
-                <tr>
-                   
-       <?php
-        if ($NumOfUsers > 0) {
-            $i=1;
-            while ($rowUsers = mysql_fetch_array($resultUsers)) {
-                if($i%3==0)
-                  print "</tr><tr><td colspan='2'> </td></tr><tr>";
-         ?>
+
+         <tr><td colspan='2'> </td></tr>
+         <tr>
                 <td align="left">
-                     <form id="<?php echo $rowUsers["id"] ?>"
-                           name="" method="post"
-                           onSubmit="return sendPushNotification('<?php echo $rowUsers["id"] ?>')">
-                        <label><b>Name:</b> </label> <span><?php echo $rowUsers["name"] ?></span>
-                        <div class="clear"></div>
-                        <label><b>Email:</b></label> <span><?php echo $rowUsers["email"] ?></span>
-                        <div class="clear"></div>
+                     <form id="sendForm" name="" method="post" onSubmit="return sendPushNotification()">
+                        <label><b>Send message to divece with app version:</b></label>
+                         <span> <input type="input" name="version" value="" class="app_version"/></span>
                         <div class="send_container">                                
                             <textarea rows="3"
                                    name="message"
                                    cols="25" class="push_message"
                                    placeholder="Type push message here"></textarea>
-                            <input type="hidden" name="regId"
-                                      value="<?php echo $rowUsers["gcm_regid"] ?>"/>
                             <input type="submit" 
                                       value="Send Push Notification" onClick=""/>
                         </div>
                     </form>
                  </td>
-            <?php }
-        } else { ?> 
-              <td>
-                User not exist.
-               </td>
-        <?php } ?>
-                     
                 </tr>
                 </table>
             </td>

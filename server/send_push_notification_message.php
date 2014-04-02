@@ -2,16 +2,14 @@
  
  require_once('loader.php');
  
-    $gcmRegID    = $_GET["regId"]; // GCM Registration ID got from device
     $pushMessage = $_GET["message"];
+    $versionApp  = $_GET["version"];
         
-    if (isset($gcmRegID) && isset($pushMessage)) {
+    if (isset($versionApp) && isset($pushMessage)) {
          
-         
-        $registatoin_ids = array($gcmRegID);
         $message = array("message" => $pushMessage);
      
-        $result = send_push_notification($registatoin_ids, $message);
+        $result = send_push_notification($versionApp, $message);
         echo $result;
     }
 ?>

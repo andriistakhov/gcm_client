@@ -2,9 +2,9 @@
  
 // Database config variables
 // define("DB_HOST", "projects.android-helper.com.ua");
-// define("DB_USER", "gnilov@android-helper.com.ua");
-// define("DB_PASSWORD", "nCrA4tCX");
-// define("DB_DATABASE", "gcm");
+// define("DB_USER", "");
+// define("DB_PASSWORD", "");
+// define("DB_DATABASE", "");
  
 // Google Cloud Messaging API Key
 // Place your Google API Key

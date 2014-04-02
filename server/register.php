@@ -4,8 +4,7 @@ require_once('loader.php');
 // return json response 
 $json = array();
 
-$nameUser = $_POST["name"];
-$nameEmail = $_POST["email"];
+$versionApp = $_POST["version_app"];
 
 // GCM Registration ID got from device
 $gcmRegID = $_POST["regId"];
@@ -14,18 +13,24 @@ $gcmRegID = $_POST["regId"];
 * Registering a user device in database
 * Store reg id in users table
 */
-if (isset($nameUser) && isset($nameEmail) && isset($gcmRegID)) {
+if (isset($versionApp) && isset($gcmRegID)) {
+
 
     // Store user details in db
-    $res = storeUser($nameUser, $nameEmail, $gcmRegID);
+    if(!isUserExisted($gcmRegID)){
+        $res = storeUser($versionApp, $gcmRegID);
 
-    $registatoin_ids = array($gcmRegID);
-    $message = array("message" => "device has been registerd in backend");
+        //send push notification
+        //$registatoin_ids = array($gcmRegID);
+        //$message = array("message" => "device has been registerd in backend");
 
-    $result = send_push_notification($registatoin_ids, $message);
-
-    echo $result;
-
+        //$result = send_back_notification($registatoin_ids, $message);
+        //echo $result;
+        echo "Device has been registered successfully";
+    }else{
+      echo "Device already registered";
+    }
+   
 } else {
     // user details not found
 
