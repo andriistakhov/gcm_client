@@ -53,8 +53,15 @@
         return $result;
     }
  
-    // Getting all registered users
-  function getAllUsers() {
+    // Getting all registered users with limit
+    function getAllUsersWithLimit($startOffset, $endOffset) {
+        $result = mysql_query("select * 
+                                    FROM gcm_users
+                                    LIMIT $startOffset , $endOffset");
+        return $result;
+    }
+    
+   function getAllUsers() {
         $result = mysql_query("select * 
                                     FROM gcm_users");
         return $result;
@@ -119,7 +126,14 @@
          for ($i = 1; $i <= $gcmRequestCount; $i++){
 
              $startOffset = $i * $gcmRequestLimit - $gcmRequestLimit;
-             $tempArray = getRegIdsByVersion($versionApp, $startOffset, $i * $gcmRequestLimit  + 1);
+             $tempArray = null;
+             
+             if (isset($versionApp)) {
+                 $tempArray = getRegIdsByVersion($versionApp, $startOffset, $i * $gcmRequestLimit  + 1);
+             }else{
+                 $tempArray = getAllUsersWithLimit(startOffset, $i * $gcmRequestLimit  + 1);
+             }
+             
              $registatoin_ids= array();
              $counter = 0;
              while($row = mysql_fetch_array($tempArray))
