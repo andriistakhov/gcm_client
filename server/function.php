@@ -94,8 +94,13 @@
     //Sending Push Notification
    function send_push_notification($versionApp, $message) {
          
-         $resultUsers =  getUserByVersion($versionApp);
-         $rowUsers = mysql_fetch_array($resultUsers);
+         $resultUsers = null;
+         if (isset($versionApp)) {
+             $resultUsers = getUserByVersion($versionApp);
+         }else{
+             $resultUsers = getAllUsers();
+         }
+         
          $NumOfUsers = mysql_num_rows($resultUsers); 
          
          // gcm can send message only to 1000 device per request 

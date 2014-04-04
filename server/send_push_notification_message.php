@@ -5,7 +5,7 @@
     $pushMessage = $_GET["message"];
     $versionApp  = $_GET["version"];
         
-    if (isset($versionApp) && isset($pushMessage)) {
+    if (isset($pushMessage)) {
          
         $message = array("message" => $pushMessage);
      
