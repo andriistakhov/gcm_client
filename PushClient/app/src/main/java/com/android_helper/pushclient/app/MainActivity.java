@@ -168,7 +168,7 @@ public class MainActivity extends ActionBarActivity {
                     Log.i(LOG_TAG, "gcm != null " + gcm.toString());
                     regid = gcm.register(Constants.GOOGLE_SENDER_ID);
 
-                    if (regid != Constants.REG_ID_IS_EMPTY) {
+                    if (!regid.equals(Constants.REG_ID_IS_EMPTY)) {
                         msg = "Device registered, registration ID=" + regid + "\n";
 
                         // You should send the registration ID to your server over HTTP, so it
@@ -214,7 +214,7 @@ public class MainActivity extends ActionBarActivity {
                     protected String doInBackground(Void... params) {
                         String msg = "";
                         try {
-                            if (getRegistrationId(getApplicationContext()) != Constants.REG_ID_IS_EMPTY) {
+                            if (!getRegistrationId(context).equals(Constants.REG_ID_IS_EMPTY)) {
                                 msg = "Try sendRegistrationIdToBackend";
                                 sendRegistrationIdToBackend();
                             } else {
