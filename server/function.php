@@ -1,4 +1,4 @@
-<?php
+﻿<?php
  
    //Storing new user and returns user details
     
@@ -49,6 +49,13 @@
         $result = mysql_query("SELECT gcm_regid 
                                     FROM gcm_users 
                                     WHERE version_app = $version 
+                                    LIMIT $startOffset , $endOffset");
+        return $result;
+    }
+	
+	function getRegIdsWithLimit($startOffset, $endOffset) {
+        $result = mysql_query("select gcm_regid 
+                                    FROM gcm_users
                                     LIMIT $startOffset , $endOffset");
         return $result;
     }
@@ -131,7 +138,7 @@
              if (isset($versionApp)) {
                  $tempArray = getRegIdsByVersion($versionApp, $startOffset, $i * $gcmRequestLimit  + 1);
              }else{
-                 $tempArray = getAllUsersWithLimit(startOffset, $i * $gcmRequestLimit  + 1);
+                 $tempArray = getRegIdsWithLimit($startOffset, $i * $gcmRequestLimit  + 1);
              }
              
              $registatoin_ids= array();

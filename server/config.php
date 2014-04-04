@@ -1,4 +1,4 @@
-<?php
+﻿<?php
  
 // Database config variables
 // define("DB_HOST", "projects.android-helper.com.ua");
