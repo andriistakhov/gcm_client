@@ -1,7 +1,7 @@
 ﻿<?php
    require_once('loader.php');
    require_once('send_push_notification_message.php');
-
+   
     $resultUsers = getAllUsers();
 
     if ($resultUsers != false)
@@ -34,7 +34,7 @@
                           $('.app_version').val("");
                     },
                     error: function(xhr, textStatus, errorThrown) {
-                          $('.push_message').val(textStatus);
+                          $('.push_message').val(xhr.responseText);
                     }
                 });
                 return false;

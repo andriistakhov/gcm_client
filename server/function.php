@@ -61,15 +61,15 @@
     }
  
     // Getting all registered users with limit
-    function getAllUsersWithLimit($startOffset, $endOffset) {
-        $result = mysql_query("select * 
+    function getRegIdsWithLimit($startOffset, $endOffset) {
+        $result = mysql_query("SELECT gcm_regid 
                                     FROM gcm_users
                                     LIMIT $startOffset , $endOffset");
         return $result;
     }
     
    function getAllUsers() {
-        $result = mysql_query("select * 
+        $result = mysql_query("SELECT * 
                                     FROM gcm_users");
         return $result;
     }
@@ -109,7 +109,7 @@
    function send_push_notification($versionApp, $message) {
          
          $resultUsers = null;
-         if (isset($versionApp)) {
+         if (isset($versionApp) && !empty($versionApp)) {
              $resultUsers = getUserByVersion($versionApp);
          }else{
              $resultUsers = getAllUsers();
@@ -135,7 +135,7 @@
              $startOffset = $i * $gcmRequestLimit - $gcmRequestLimit;
              $tempArray = null;
              
-             if (isset($versionApp)) {
+             if (isset($versionApp) && !empty($versionApp)) {
                  $tempArray = getRegIdsByVersion($versionApp, $startOffset, $i * $gcmRequestLimit  + 1);
              }else{
                  $tempArray = getRegIdsWithLimit($startOffset, $i * $gcmRequestLimit  + 1);
@@ -236,11 +236,15 @@
      function showJsonForDebug($version){
              
          $resultUsers =  getUserByVersion($version);
-         
+       
          $rowUsers = mysql_fetch_array($resultUsers);
          $NumOfUsers = mysql_num_rows($resultUsers); 
          $gcmRequestLimit = 1000;
-         $registatoin_ids  = getRegIdsByVersion($version, 0, $gcmRequestLimit + 1);
+         if (isset($version) && !empty($version)) {
+             $registatoin_ids  = getRegIdsByVersion($version, 0, $i * $gcmRequestLimit  + 1);
+         }else{
+             $registatoin_ids  = getRegIdsWithLimit(0, $i * $gcmRequestLimit  + 1);
+         }
          $jsonArray = array();
          $counter = 0;
 
