@@ -78,7 +78,8 @@ public class GcmIntentService extends IntentService {
                     .setSmallIcon(R.drawable.ic_stat_gcm)
                     .setContentTitle("Push client GCM Notification")
                     .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
-                    .setContentText(msg);
+                    .setContentText(msg)
+                    .setAutoCancel(true);
 
         Log.i(LOG_TAG, "Push client GCM Notification");
 
